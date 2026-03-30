@@ -54,11 +54,35 @@ dembrandt bmw.de --dark-mode       # Extract colors from dark mode variant
 dembrandt bmw.de --mobile          # Use mobile viewport (390x844, iPhone 12/13/14/15) for responsive analysis
 dembrandt bmw.de --slow            # 3x longer timeouts (24s hydration) for JavaScript-heavy sites
 dembrandt bmw.de --brand-guide      # Generate a brand guide PDF
+dembrandt bmw.de --pages 5         # Analyze 5 pages (homepage + 4 discovered pages), merges results
+dembrandt bmw.de --sitemap          # Discover pages from sitemap.xml instead of DOM links
+dembrandt bmw.de --pages 10 --sitemap # Combine: up to 10 pages discovered via sitemap
 dembrandt bmw.de --no-sandbox      # Disable Chromium sandbox (required for Docker/CI)
 dembrandt bmw.de --browser=firefox # Use Firefox instead of Chromium (better for Cloudflare bypass)
 ```
 
 Default: formatted terminal display only. Use `--save-output` to persist results as JSON files. Browser automatically retries in visible mode if headless extraction fails.
+
+### Multi-Page Extraction
+
+Analyze multiple pages to get a more complete picture of a site's design system. Results are merged into a single unified output with cross-page confidence boosting — colors appearing on multiple pages get higher confidence scores.
+
+```bash
+# Analyze homepage + 4 auto-discovered pages (default: 5 total)
+dembrandt stripe.com --pages 5
+
+# Use sitemap.xml for page discovery instead of DOM link scraping
+dembrandt stripe.com --sitemap
+
+# Combine both: up to 10 pages from sitemap
+dembrandt stripe.com --pages 10 --sitemap
+```
+
+**Page discovery** works two ways:
+- **DOM links** (default): Scrapes navigation, header, and footer links from the homepage, prioritizing key pages like /pricing, /about, /features
+- **Sitemap** (`--sitemap`): Parses sitemap.xml (checks robots.txt first), follows sitemapindex references, and scores URLs by importance
+
+Pages are crawled sequentially with polite delays. Failed pages are skipped without aborting the run.
 
 ### Browser Selection
 
